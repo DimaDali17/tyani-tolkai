@@ -831,6 +831,13 @@ function updateHover() {
   } else { tip.style.opacity = 0; canvas.style.cursor = 'grab'; }
 }
 
+// ---------------------------------------------------------------- sound from the very first touch
+try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {} // iPhone: play even in silent mode
+let greeted = false;
+function unlockAudio() { audio(); if (greeted) return; greeted = true; snort(halves[0], 0.1); snort(halves[1], 0.6); }
+for (const ev of ['pointerdown', 'touchstart', 'keydown']) addEventListener(ev, unlockAudio, { capture:true, passive:true });
+setInterval(() => { if (greeted && soundOn && !document.hidden && Math.random() < 0.5) snort(pick(halves)); }, 7000);
+
 // ---------------------------------------------------------------- UI
 const $ = id => document.getElementById(id);
 $('bWalk').onclick = () => { audio(); walk.on = !walk.on; $('bWalk').classList.toggle('on', walk.on);
